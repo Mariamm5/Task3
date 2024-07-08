@@ -1,38 +1,38 @@
 <?php
-if (isset($_POST["submit"]) && $_FILES['image']) {
-    $uploadDir = "uploads/";
-    $uploadFile = $uploadDir . basename($_FILES["image"]["name"]);
+if (isset($_POST['submit']) && $_FILES['image']) {
+    $uploadDir = 'uploads/';
+    $uploadFile = $uploadDir . basename($_FILES['image']['name']);
     $imageFileType = strtolower(pathinfo($uploadFile, PATHINFO_EXTENSION));
 
-    $check = getimagesize($_FILES["image"]["tmp_name"]);
+    $check = getimagesize($_FILES['image']['tmp_name']);
     if ($check !== false) {
-        if ($_FILES["image"]["size"] > 500000) {
-            echo "Sorry, your file is too large.";
+        if ($_FILES['image']['size'] > 500000) {
+            echo 'Sorry, your file is too large.';
             exit;
         }
-        if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif") {
-            echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
+        if ($imageFileType != 'jpg' && $imageFileType != 'png' && $imageFileType != 'jpeg' && $imageFileType != 'gif') {
+            echo 'Sorry, only JPG, JPEG, PNG & GIF files are allowed.';
             exit;
         }
-        if (move_uploaded_file($_FILES["image"]["tmp_name"], $uploadFile)) {
+        if (move_uploaded_file($_FILES['image']['tmp_name'], $uploadFile)) {
             $thumbnailWidth = 150;
             $thumbnailHeight = 150;
 
             list($width, $height) = getimagesize($uploadFile);
 
             switch ($imageFileType) {
-                case "jpg":
-                case "jpeg":
+                case 'jpg':
+                case 'jpeg':
                     $image = imagecreatefromjpeg($uploadFile);
                     break;
-                case "png":
+                case 'png':
                     $image = imagecreatefrompng($uploadFile);
                     break;
-                case "gif":
+                case 'gif':
                     $image = imagecreatefromgif($uploadFile);
                     break;
                 default:
-                    echo "Unsupported file type.";
+                    echo 'Unsupported file type.';
                     exit;
             }
             $thumbnail = imagecreatetruecolor($thumbnailWidth, $thumbnailHeight);
@@ -48,10 +48,10 @@ if (isset($_POST["submit"]) && $_FILES['image']) {
             imagedestroy($thumbnail);
 
         } else {
-            echo "Sorry, there was an error uploading your file.";
+            echo 'Sorry, there was an error uploading your file.';
         }
     } else {
-        echo "File is not an image.";
+        echo 'File is not an image.';
     }
 }
 
