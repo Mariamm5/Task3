@@ -37,13 +37,13 @@ if (isset($_POST['submit']) && $_FILES['image']) {
             }
             $thumbnail = imagecreatetruecolor($thumbnailWidth, $thumbnailHeight);
             imagecopyresampled($thumbnail, $image, 0, 0, 0, 0, $thumbnailWidth, $thumbnailHeight, $width, $height);
-            echo '<h2>Original Image</h2>';
-            echo '<img src="' . $uploadFile . '" alt="Original Image"><br>';
+            echo ' <h2>Original Image </h2 >';
+            echo "<img src=" . $uploadFile . " alt='Original Image'><br>";
 
             echo '<h2>Thumbnail</h2>';
-            $thumbnailFileName = $uploadDir . "thumb_" . basename($_FILES["image"]["name"]);
+            $thumbnailFileName = $uploadDir . "thumb_" . basename($_FILES['image']['name']);
             imagejpeg($thumbnail, $thumbnailFileName);
-            echo '<img src="' . $thumbnailFileName . '" alt="Thumbnail">';
+            echo "<img src=" . $thumbnailFileName . " alt='Thumbnail'>";
             imagedestroy($image);
             imagedestroy($thumbnail);
 
