@@ -1,6 +1,6 @@
 <?php
-if (isset($_POST['submit']) && $_FILES['image']) {
-    $uploadDir = 'uploads/';
+$uploadDir = 'uploads/';
+if (isset($_POST['submit']) && isset($_FILES['image'])) {
     $uploadFile = $uploadDir . basename($_FILES['image']['name']);
     $imageFileType = strtolower(pathinfo($uploadFile, PATHINFO_EXTENSION));
 
@@ -37,15 +37,11 @@ if (isset($_POST['submit']) && $_FILES['image']) {
             }
             $thumbnail = imagecreatetruecolor($thumbnailWidth, $thumbnailHeight);
             imagecopyresampled($thumbnail, $image, 0, 0, 0, 0, $thumbnailWidth, $thumbnailHeight, $width, $height);
-            echo ' <h2>Original Image </h2 >';
-            echo "<img src={$uploadFile} alt='Original Image'><br>";
-            echo '<h2>Thumbnail</h2>';
             $thumbnailFileName = $uploadDir . "thumb_" . basename($_FILES['image']['name']);
             imagejpeg($thumbnail, $thumbnailFileName);
-            echo "<img src={$thumbnailFileName} alt='Thumbnail'>";
             imagedestroy($image);
             imagedestroy($thumbnail);
-
+            $thumbnail = $thumbnailFileName;
         } else {
             echo 'Sorry, there was an error uploading your file.';
         }
@@ -53,4 +49,30 @@ if (isset($_POST['submit']) && $_FILES['image']) {
         echo 'File is not an image.';
     }
 }
+?>
 
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Upload Image</title>
+</head>
+<body>
+<h2>Upload Image</h2>
+<form action="upload.php" method="post" enctype="multipart/form-data">
+    <input type="file" name="image" accept="image/*">
+    <button type="submit" name="submit">Upload Image</button>
+</form>
+
+<?php if (!empty($uploadFile) && !empty($thumbnail)): ?>
+    <h2>Original Image</h2>
+    <img src="<?= $uploadFile ?>" alt="Upload image">
+    <h2>Thumbnail</h2>
+    <img src="<?= $thumbnail ?>" alt="Edited image">
+<?php endif; ?>
+
+</body>
+</html>
