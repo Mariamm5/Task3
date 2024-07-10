@@ -62,7 +62,7 @@ if (isset($_POST['submit']) && isset($_FILES['image'])) {
 </head>
 <body>
 <h2>Upload Image</h2>
-<form action="upload.php" method="post" enctype="multipart/form-data">
+<form method="post" enctype="multipart/form-data">
     <input type="file" name="image" accept="image/*">
     <button type="submit" name="submit">Upload Image</button>
 </form>
