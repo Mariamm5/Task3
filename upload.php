@@ -1,5 +1,7 @@
 <?php
 $uploadDir = 'uploads/';
+session_start();
+$error = false;
 if (isset($_POST['submit']) && isset($_FILES['image'])) {
     $uploadFile = $uploadDir . basename($_FILES['image']['name']);
     $imageFileType = strtolower(pathinfo($uploadFile, PATHINFO_EXTENSION));
@@ -7,11 +9,12 @@ if (isset($_POST['submit']) && isset($_FILES['image'])) {
     $check = getimagesize($_FILES['image']['tmp_name']);
     if ($check !== false) {
         if ($_FILES['image']['size'] > 500000) {
-            echo 'Sorry, your file is too large.';
+            $error = true;
+            $_SESSION['upload']['error'] = 'Sorry, your file is too large';
             exit;
         }
         if ($imageFileType != 'jpg' && $imageFileType != 'png' && $imageFileType != 'jpeg' && $imageFileType != 'gif') {
-            echo 'Sorry, only JPG, JPEG, PNG & GIF files are allowed.';
+            $_SESSION['upload']['error'] = 'Sorry, only JPG, JPEG, PNG & GIF files are allowed.';
             exit;
         }
         if (move_uploaded_file($_FILES['image']['tmp_name'], $uploadFile)) {
@@ -32,21 +35,22 @@ if (isset($_POST['submit']) && isset($_FILES['image'])) {
                     $image = imagecreatefromgif($uploadFile);
                     break;
                 default:
-                    echo 'Unsupported file type.';
                     exit;
             }
-            $thumbnail = imagecreatetruecolor($thumbnailWidth, $thumbnailHeight);
-            imagecopyresampled($thumbnail, $image, 0, 0, 0, 0, $thumbnailWidth, $thumbnailHeight, $width, $height);
-            $thumbnailFileName = $uploadDir . "thumb_" . basename($_FILES['image']['name']);
-            imagejpeg($thumbnail, $thumbnailFileName);
-            imagedestroy($image);
-            imagedestroy($thumbnail);
-            $thumbnail = $thumbnailFileName;
+            if (!$error) {
+                $thumbnail = imagecreatetruecolor($thumbnailWidth, $thumbnailHeight);
+                imagecopyresampled($thumbnail, $image, 0, 0, 0, 0, $thumbnailWidth, $thumbnailHeight, $width, $height);
+                $thumbnailFileName = $uploadDir . "thumb_" . basename($_FILES['image']['name']);
+                imagejpeg($thumbnail, $thumbnailFileName);
+                imagedestroy($image);
+                imagedestroy($thumbnail);
+                $thumbnail = $thumbnailFileName;
+            }
         } else {
-            echo 'Sorry, there was an error uploading your file.';
+            $_SESSION['upload']['error'] = 'Sorry, there was an error uploading your file.';
         }
     } else {
-        echo 'File is not an image.';
+        $_SESSION['upload']['error'] = 'File is not an image.';
     }
 }
 ?>
@@ -63,6 +67,15 @@ if (isset($_POST['submit']) && isset($_FILES['image'])) {
 <body>
 <h2>Upload Image</h2>
 <form method="post" enctype="multipart/form-data">
+
+    <?php if (isset($_SESSION['upload']['error'])): ?>
+        <p style="color:red;">
+            <?= $_SESSION['upload']['error'];
+            unset($_SESSION['upload']['error']); ?>
+        </p>
+    <?php endif; ?>
+
+
     <input type="file" name="image" accept="image/*">
     <button type="submit" name="submit">Upload Image</button>
 </form>
