@@ -1,7 +1,7 @@
 <?php
 $uploadDir = 'uploads/';
-session_start();
 $error = false;
+$message = null;
 if (isset($_POST['submit']) && isset($_FILES['image'])) {
     $uploadFile = $uploadDir . basename($_FILES['image']['name']);
     $imageFileType = strtolower(pathinfo($uploadFile, PATHINFO_EXTENSION));
@@ -10,11 +10,11 @@ if (isset($_POST['submit']) && isset($_FILES['image'])) {
     if ($check !== false) {
         if ($_FILES['image']['size'] > 500000) {
             $error = true;
-            $_SESSION['upload']['error'] = 'Sorry, your file is too large';
+            $message = 'Sorry, your file is too large';
             exit;
         }
         if ($imageFileType != 'jpg' && $imageFileType != 'png' && $imageFileType != 'jpeg' && $imageFileType != 'gif') {
-            $_SESSION['upload']['error'] = 'Sorry, only JPG, JPEG, PNG & GIF files are allowed.';
+            $message = 'Sorry, only JPG, JPEG, PNG & GIF files are allowed.';
             exit;
         }
         if (move_uploaded_file($_FILES['image']['tmp_name'], $uploadFile)) {
@@ -47,10 +47,10 @@ if (isset($_POST['submit']) && isset($_FILES['image'])) {
                 $thumbnail = $thumbnailFileName;
             }
         } else {
-            $_SESSION['upload']['error'] = 'Sorry, there was an error uploading your file.';
+            $message = 'Sorry, there was an error uploading your file.';
         }
     } else {
-        $_SESSION['upload']['error'] = 'File is not an image.';
+        $message = 'File is not an image.';
     }
 }
 ?>
@@ -68,10 +68,10 @@ if (isset($_POST['submit']) && isset($_FILES['image'])) {
 <h2>Upload Image</h2>
 <form method="post" enctype="multipart/form-data">
 
-    <?php if (isset($_SESSION['upload']['error'])): ?>
+    <?php if (isset($message)): ?>
         <p style="color:red;">
-            <?= $_SESSION['upload']['error'];
-            unset($_SESSION['upload']['error']); ?>
+            <?= htmlspecialchars($message);
+            unset($message); ?>
         </p>
     <?php endif; ?>
 
