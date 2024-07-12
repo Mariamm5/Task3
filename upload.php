@@ -11,11 +11,9 @@ if (isset($_POST['submit']) && isset($_FILES['image'])) {
         if ($_FILES['image']['size'] > 500000) {
             $error = true;
             $message = 'Sorry, your file is too large';
-            exit;
         }
         if ($imageFileType != 'jpg' && $imageFileType != 'png' && $imageFileType != 'jpeg' && $imageFileType != 'gif') {
             $message = 'Sorry, only JPG, JPEG, PNG & GIF files are allowed.';
-            exit;
         }
         if (move_uploaded_file($_FILES['image']['tmp_name'], $uploadFile)) {
             $thumbnailWidth = 150;
