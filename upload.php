@@ -33,7 +33,7 @@ if (isset($_POST['submit']) && isset($_FILES['image'])) {
                     $image = imagecreatefromgif($uploadFile);
                     break;
                 default:
-                    exit;
+                    break;
             }
             if (!$error) {
                 $thumbnail = imagecreatetruecolor($thumbnailWidth, $thumbnailHeight);
