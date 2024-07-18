@@ -7,11 +7,6 @@ if (isset($_POST['submit']) && isset($_FILES['image'])) {
     $uploadFile = $uploadDir . basename($_FILES['image']['name']);
     $imageFileType = strtolower(pathinfo($uploadFile, PATHINFO_EXTENSION));
     $check = getimagesize($_FILES['image']['tmp_name']);
-//
-//
-//    echo "<pre>";
-//    var_dump($check);
-//    echo "</pre>";
 
     if ($check === false) {
         $error = true;
@@ -58,7 +53,7 @@ if (isset($_POST['submit']) && isset($_FILES['image'])) {
         }
     }
 } else {
-    $message = 'Select a img to upload.';
+    $message = 'Select an img to upload.';
 }
 
 ?>
