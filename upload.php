@@ -2,23 +2,30 @@
 $uploadDir = 'uploads/';
 $error = false;
 $message = null;
+
 if (isset($_POST['submit']) && isset($_FILES['image'])) {
     $uploadFile = $uploadDir . basename($_FILES['image']['name']);
     $imageFileType = strtolower(pathinfo($uploadFile, PATHINFO_EXTENSION));
-
     $check = getimagesize($_FILES['image']['tmp_name']);
-    if ($check !== false) {
-        if ($_FILES['image']['size'] > 500000) {
-            $error = true;
-            $message = 'Sorry, your file is too large';
-        }
-        if ($imageFileType != 'jpg' && $imageFileType != 'png' && $imageFileType != 'jpeg' && $imageFileType != 'gif') {
-            $message = 'Sorry, only JPG, JPEG, PNG & GIF files are allowed.';
-        }
+//
+//
+//    echo "<pre>";
+//    var_dump($check);
+//    echo "</pre>";
+
+    if ($check === false) {
+        $error = true;
+        $message = 'File is not an image.';
+    } elseif ($_FILES['image']['size'] > 500000) {
+        $error = true;
+        $message = 'Sorry, your file is too large';
+    } elseif ($imageFileType != 'jpg' && $imageFileType != 'png' && $imageFileType != 'jpeg' && $imageFileType != 'gif') {
+        $error = true;
+        $message = 'Sorry, only JPG, JPEG, PNG & GIF files are allowed.';
+    } else {
         if (move_uploaded_file($_FILES['image']['tmp_name'], $uploadFile)) {
             $thumbnailWidth = 150;
             $thumbnailHeight = 150;
-
             list($width, $height) = getimagesize($uploadFile);
 
             switch ($imageFileType) {
@@ -43,14 +50,17 @@ if (isset($_POST['submit']) && isset($_FILES['image'])) {
                 imagedestroy($image);
                 imagedestroy($thumbnail);
                 $thumbnail = $thumbnailFileName;
+                $message = 'File uploaded successfully.';
             }
+
         } else {
             $message = 'Sorry, there was an error uploading your file.';
         }
-    } else {
-        $message = 'File is not an image.';
     }
+} else {
+    $message = 'Select a img to upload.';
 }
+
 ?>
 
 <!doctype html>
@@ -67,7 +77,7 @@ if (isset($_POST['submit']) && isset($_FILES['image'])) {
 <form method="post" enctype="multipart/form-data">
 
     <?php if (isset($message)): ?>
-        <p style="color:red;">
+        <p style="color:black">
             <?= htmlspecialchars($message);
             unset($message); ?>
         </p>
